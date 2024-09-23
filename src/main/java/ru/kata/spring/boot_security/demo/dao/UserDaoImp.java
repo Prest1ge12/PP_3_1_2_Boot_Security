@@ -1,19 +1,33 @@
 package ru.kata.spring.boot_security.demo.dao;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserDaoImp implements UserDao {
     @PersistenceContext
     private EntityManager entityManager;
+    private final RoleDao roleDao;
+    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    public UserDaoImp(PasswordEncoder passwordEncoder, RoleDao roleDao) {
+        this.passwordEncoder = passwordEncoder;
+        this.roleDao = roleDao;
+    }
 
     @Override
     public List<User> getAllUsers() {
@@ -32,8 +46,9 @@ public class UserDaoImp implements UserDao {
     }
 
     @Override
-    public void saveUser(User user) {
-        entityManager.persist(user);
+    public void saveUser(User newUser) {
+//        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        entityManager.persist(newUser);
     }
 
     @Override
@@ -42,8 +57,18 @@ public class UserDaoImp implements UserDao {
         if (existingUser == null) {
             throw new EntityNotFoundException("User not found with id: " + id);
         }
-        existingUser.setUsername(updateUser.getUsername());
+        existingUser.setPassword(passwordEncoder.encode(existingUser.getPassword()));
+        existingUser.setUserName(updateUser.getUserName());
+        existingUser.setUserSurname(updateUser.getUserSurname());
+        existingUser.setUserEmail(updateUser.getUserEmail());
         existingUser.setAge(updateUser.getAge());
+
+//        if (rolesImp != null) {
+//            Set<Role> roles = roleDao.getAvailableRoles().stream()
+//                    .filter(role -> rolesImp.contains(role.getId()))
+//                    .collect(Collectors.toSet());
+
+        existingUser.setRoles(updateUser.getRoles());
         entityManager.merge(existingUser);
     }
 
@@ -54,5 +79,16 @@ public class UserDaoImp implements UserDao {
             throw new EntityNotFoundException("User not found with id: " + id);
         }
         entityManager.remove(user);
+    }
+
+    @Override
+    public User findByUsername(String name){
+        try {
+            return entityManager.createQuery("SELECT u FROM User u WHERE u.userName = :username", User.class)
+                    .setParameter("username", name)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            throw new EntityNotFoundException("User not found with username: " + name);
+        }
     }
 }

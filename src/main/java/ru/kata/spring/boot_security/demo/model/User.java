@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.model;
 
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -10,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
@@ -19,18 +22,33 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    private String userName;
+
+    private String userSurname;
 
     private int age;
 
+    @Column(name = "user_email", unique = true, nullable = false)
+    private String userEmail;
+
     private String password;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Collection<Role> roles;
 
     public User() {
     }
 
-    public User(String name, int age) {
+    public User(String username, String userSurname, int age, String userEmail, String password, Collection<Role> roles) {
+        this.userName = username;
+        this.userSurname = userSurname;
         this.age = age;
-        this.username = name;
+        this.userEmail = userEmail;
+        this.password = password;
+        this.roles = (roles != null) ? roles : new ArrayList<>();
     }
 
     public Long getId() {
@@ -41,12 +59,28 @@ public class User {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserSurname() {
+        return userSurname;
+    }
+
+    public void setUserSurname(String userSurname) {
+        this.userSurname = userSurname;
     }
 
     public int getAge() {
@@ -65,12 +99,6 @@ public class User {
         this.password = password;
     }
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Collection<Role> roles;
-
     public Collection<Role> getRoles() {
         return roles;
     }
@@ -83,8 +111,12 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + username + '\'' +
+                ", userName='" + userName + '\'' +
+                ", userSurname='" + userSurname + '\'' +
                 ", age=" + age +
+                ", userEmail='" + userEmail + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
                 '}';
     }
 }

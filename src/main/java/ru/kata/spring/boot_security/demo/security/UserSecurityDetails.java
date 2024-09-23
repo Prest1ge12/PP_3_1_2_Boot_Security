@@ -18,7 +18,7 @@ public class UserSecurityDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
                 .toList();
     }
 
@@ -29,9 +29,12 @@ public class UserSecurityDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.user.getUsername();
+        return this.user.getUserName();
     }
 
+    public User getUser() {
+        return this.user;
+    }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -53,7 +56,5 @@ public class UserSecurityDetails implements UserDetails {
         return true;
     }
 
-    public User getUser() {
-        return this.user;
-    }
+
 }

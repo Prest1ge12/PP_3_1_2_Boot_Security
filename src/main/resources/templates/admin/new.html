@@ -7,29 +7,35 @@
 <body>
 <form th:method="POST" th:action="@{/admin/new/create}" th:object="${user}">
     <label for="name">Введите имя: </label>
-    <input type="text" th:field="*{username}" id="name"></input>
+    <input type="text" th:field="*{userName}" id="name"></input>
+    <br>
+    <label for="surname">Введите Фамилию: </label>
+    <input type="text" th:field="*{userName}" id="surname"></input>
+    <br>
+    <label for="email">Введите E-mail: </label>
+    <input type="text" th:field="*{userEmail}" id="email"></input>
     <br>
     <label for="age">Введите возраст: </label>
     <input type="text" th:field="*{age}" id="age"></input>
     <br>
-<!--    <label for="age">Новый пароль: </label>-->
-<!--    <input type="text" th:field="*{password}" id="password"></input>-->
-<!--    <br>-->
-<!--    <label for="age">Назначить роль: </label>-->
-<!--    <input type="text" th:field="*{roles}" id="roles"></input>-->
-<!--    <br>-->
-    <input type="submit" value="Создать"></input>
-    <a th:href="@{/admin/users}">Назад</a>
+    <label for="age">Новый пароль: </label>
+    <input type="text" th:field="*{password}" id="password"></input>
+    <br>
+    <label for="age">Назначить роль: </label>
+    <input type="text" th:field="*{roles}" id="roles"></input>
+    <br>
+    <br>
+    <button type="submit">Создать пользователя</button>
 </form>
 <br>
-<form th:if="${isAuthenticated != null ? !isAuthenticated : true}" action="/login" method="post">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-    <button type="submit">Login</button>
+<br>
+<form th:method="GET" th:action="@{/admin/users}">
+    <button type="submit">Назад</button>
 </form>
-<form th:if="${isAuthenticated != null ? isAuthenticated : false}" action="/logout" method="post">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+<br>
+<br>
+<form action="/logout" method="post">
     <button type="submit">Logout</button>
-</form>
 </form>
 </body>
 </html>
