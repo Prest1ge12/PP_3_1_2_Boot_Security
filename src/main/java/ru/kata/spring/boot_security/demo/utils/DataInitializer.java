@@ -31,16 +31,16 @@ public class DataInitializer implements CommandLineRunner {
 
         // Создаем первого пользователя (админ)
         User adminUser = new User();
-        adminUser.setUserName("1");
+        adminUser.setUsername("admin");
         adminUser.setUserSurname("Adminov");
         adminUser.setAge(30);
         adminUser.setUserEmail("admin@example.com");
-        adminUser.setPassword(passwordEncoder.encode("1"));
+        adminUser.setPassword(passwordEncoder.encode("admin"));
         adminUser.setRoles(new HashSet<>(List.of(adminRole, userRole)));
 
         // Создаем второго пользователя (обычный пользователь)
         User regularUser = new User();
-        regularUser.setUserName("user");
+        regularUser.setUsername("user");
         regularUser.setUserSurname("Userov");
         regularUser.setAge(25);
         regularUser.setUserEmail("user@example.com");

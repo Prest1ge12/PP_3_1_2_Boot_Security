@@ -9,14 +9,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import ru.kata.spring.boot_security.demo.service.UserServiceImp;
-
-import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
@@ -32,7 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     // Настройка аутентификации
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userServiceImp);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
@@ -60,27 +55,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/index")
                 .permitAll();
     }
-
-//    @Bean
-//    public JdbcUserDetailsManager userDetailsManager(DataSource dataSource){
-//        UserDetails user = User.builder()
-//                .username("user")
-//                .password("{bcrypt}$2a$12$DfM5P/nDiVPnHIOj0ZiF3Oq/UqXgZszszJZx1ZqYxr08Qo8s3Ccky")
-//                .roles("USER")
-//                .build();
-//
-//        UserDetails admin = User.builder()
-//                .username("admin")
-//                .password("{bcrypt}$2a$12$1V0OKcIvqaDOivJdg2FAVusCjRCH0zheWtm.YBXNY0W5pra2PQ.WS")
-//                .roles("USER","ADMIN")
-//                .build();
-//        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
-//
-//        System.out.println("Создание пользователя: " + user.getUsername());
-//        System.out.println("Создание администратора: " + admin.getUsername());
-//
-//        jdbcUserDetailsManager.createUser(user);
-//        jdbcUserDetailsManager.createUser(admin);
-//        return jdbcUserDetailsManager;
-//    }
 }
